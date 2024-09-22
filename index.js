@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-  origin: 'http://localhost:5174', 
+  origin: 'https://cookies-zuip.vercel.app/', 
   methods: 'GET, POST',
   credentials: true,
 }));
