@@ -9,21 +9,20 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use(cors({
-  origin: 'https://cookies-zuip.vercel.app',  // Your frontend domain without trailing slash
-  methods: 'GET, POST',
-  credentials: true, // Allow sending cookies
+  origin: 'https://cookies-zuip.vercel.app',
+  methods: ['GET', 'POST'],                   
+  credentials: true                          
 }));
 
-// Helper to check if in production
 const isProduction = process.env.NODE_ENV === 'production';
 
 app.post('/setCookie', (req, res) => {
   const { username } = req.body;
   res.cookie('username', username, {
-    httpOnly: true,
-    secure: isProduction,  // Set 'secure' only in production (https)
-    sameSite: 'None',      // Enable cross-origin cookie sharing
-    maxAge: 1 * 60 * 60 * 1000, // 1 hour
+    httpOnly: true,     
+    secure: isProduction,  
+    sameSite: 'None',     
+    maxAge: 12 * 60 * 60 * 1000, 
   });
   res.status(200).json({ message: 'Cookie set successfully' });
 });
@@ -39,25 +38,31 @@ app.get('/getCookie', (req, res) => {
 
 app.get('/response/:code', (req, res) => {
   const code = parseInt(req.params.code);
+  const cookieOptions = {
+    maxAge: 12 * 60 * 60 * 1000,
+    sameSite: 'None',
+    secure: isProduction
+  };
+
   switch (code) {
     case 200:
-      res.cookie('status', 'OK', { maxAge: 1 * 60 * 60 * 1000, sameSite: 'None', secure: isProduction });
+      res.cookie('status', 'OK', cookieOptions);
       res.status(200).json({ message: 'OK' });
       break;
     case 201:
-      res.cookie('status', 'Created', { maxAge: 1 * 60 * 60 * 1000, sameSite: 'None', secure: isProduction });
+      res.cookie('status', 'Created', cookieOptions);
       res.status(201).json({ message: 'Created' });
       break;
     case 400:
-      res.cookie('status', 'Bad_Request', { maxAge: 1 * 60 * 60 * 1000, sameSite: 'None', secure: isProduction });
+      res.cookie('status', 'Bad_Request', cookieOptions);
       res.status(400).json({ message: 'Bad_Request' });
       break;
     case 404:
-      res.cookie('status', 'Not_Found', { maxAge: 1 * 60 * 60 * 1000, sameSite: 'None', secure: isProduction });
+      res.cookie('status', 'Not_Found', cookieOptions);
       res.status(404).json({ message: 'Not_Found' });
       break;
     case 500:
-      res.cookie('status', 'Internal_Server_Error', { maxAge: 1 * 60 * 60 * 1000, sameSite: 'None', secure: isProduction });
+      res.cookie('status', 'Internal_Server_Error', cookieOptions);
       res.status(500).json({ message: 'Internal_Server_Error' });
       break;
     default:
